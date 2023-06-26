@@ -17,7 +17,22 @@ contract Ecommerce {
         uint256 stock;
     }
 
+    struct Order {
+        uint256 time;
+        Item item;
+    }
+
     mapping(uint256 => Item) public items;
+    mapping(address=> uint256) public orderCount;
+    mapping(address=> mapping(uint256 => Order)) public orders;
+
+    event List(string name, uint256 cost, uint256 quantity);
+    event Buy(address buyer, uint256 orderId, uint256 itemId);
+
+    modifier onlyOwner(){
+        require(msg.sender==owner);
+        _;
+    }
 
     constructor(){
         owner=msg.sender;
@@ -32,7 +47,8 @@ contract Ecommerce {
         uint256 _cost,
         uint256 _rating,
         uint256 _stock
-        ) public {
+        ) public onlyOwner {
+
         
         Item memory item = Item(
             _id,
@@ -42,9 +58,41 @@ contract Ecommerce {
             _cost,
             _rating,
             _stock);
+        // Save the item to blockchain
         items[_id]=item;
+
+    // emit events
+    emit List(_name, _cost, _stock);
     }
     //Buy products
 
+    function buy(uint256 _id) public payable {
+        // Fetch item
+        Item memory item=items[_id];
+
+        // Require enough ether to buy item
+        require(msg.value >= item.cost);
+
+        // Require item in stock
+        require(item.stock > 0);
+
+        // Create order
+        Order memory order= Order(block.timestamp, item);
+
+        //Save the order to chain
+        orderCount[msg.sender]++;
+        orders[msg.sender][orderCount[msg.sender]]=order;
+        
+        // Substack stock
+        items[_id].stock=item.stock-1;
+
+        // Emit event
+        emit Buy(msg.sender, orderCount[msg.sender], item.id);
+    }
+
     //Widthdraw funds
+    function withdraw() public onlyOwner{
+        (bool success, )= owner.call{value: address(this).balance}("");
+        require(success);
+    }
 }
