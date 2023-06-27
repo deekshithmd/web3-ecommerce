@@ -5,30 +5,28 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const hre = require("hardhat");
-const {items} = require("../src/assets/items")
+const { items } = require("../src/items.json");
 
 const tokens = (n) => {
   return hre.ethers.parseEther(n)
 };
 
 async function main() {
-const [deployer]= hre.ethers.getSigners();
+const [deployer]= await hre.ethers.getSigners();
 
 const Ecommerce = await hre.ethers.getContractFactory("Ecommerce");
 const ecommerceContract = await Ecommerce.deploy();
-await ecommerceContract.deplyed();
-
-console.log("Contract deployed at",ecommerceContract.getAddress())
+await ecommerceContract.waitForDeployment();
+console.log("Contract deployed at",await ecommerceContract.getAddress())
 
 // List items
-
-for( let i =0 ;i<items.length;i++){
-  const transaction= await ecommerceContract.connect(deployer).listenerCount(
+for( let i =0 ;i<items?.length;i++){
+  const transaction= await ecommerceContract.connect(deployer).list(
     items[i].id,
     items[i].name,
     items[i].category,
     items[i].image,
-    tokens(items[i].price),
+    tokens(items[i].cost),
     items[i].rating,
     items[i].stock
   )
