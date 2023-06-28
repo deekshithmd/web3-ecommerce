@@ -1,47 +1,91 @@
-import { useEffect, useState } from 'react'
-import {ethers} from 'ethers'
+import { useEffect, useState } from "react";
+import { ethers } from "ethers";
 
 // // Components
-import Navigation from './components/Navigation'
-// import Section from './components/Section'
-// import Product from './components/Product'
+import Navigation from "./components/Navigation";
+import Section from "./components/Section";
+import Product from "./components/Product";
 
 // ABIs
-import Ecommerce from './abis/Ecommerce.json'
+import Ecommerce from "./abis/Ecommerce.json";
 
 // Config
-import config from './config.json'
+import config from "./config.json";
 
 function App() {
-  const [account,setAccount]=useState(null);
-  const [provider,setProvider]=useState(null);
-  const [ecommerce,setEcommrce]=useState(null)
+  const [account, setAccount] = useState(null);
+  const [provider, setProvider] = useState(null);
+  const [ecommerce, setEcommrce] = useState(null);
+  const [electronics, setElectronics] = useState([]);
+  const [toys, setToys] = useState([]);
+  const [clothing, setClothing] = useState([]);
 
-  const loadBlockChainData=async()=>{
+  const [item, setItem] = useState(null);
+  const [toggle, setToggle] = useState(false);
+
+  const togglePop = (item) => {
+    setItem(item);
+    setToggle(!toggle);
+  };
+
+  const loadBlockChainData = async () => {
     // Connect to blockchain
-    const provider= new ethers.BrowserProvider(window.ethereum);
+    const provider = new ethers.BrowserProvider(window.ethereum);
     setProvider(provider);
-    const network= await provider.getNetwork();
+    const network = await provider.getNetwork();
     // Connect with smart contract create JS versions
-    const ecommerce= new ethers.Contract(config[parseInt(network.chainId)].ecommerce.address, Ecommerce, provider);
+    console.log(parseInt(network.chainId))
+    const ecommerce = new ethers.Contract(
+      config[parseInt(network.chainId)].ecommerce.address,
+      Ecommerce,
+      provider
+    );
     setEcommrce(ecommerce);
+    console.log("contract", ecommerce);
     // load products
-    const items=[];
-    for(let i=0;i<9;i++){
-      const item=ecommerce.items[i+1];
+    const items = [];
+    for (let i = 0; i < 9; i++) {
+      const item = ecommerce.items[i + 1];
       items.push(item);
     }
-    console.log("items");
-  }
+    console.log(items, items);
+    const electronics = items.filter(
+      (item) => item?.category === "electronics"
+    );
+    setElectronics(electronics);
+    const clothing = items.filter((item) => item?.category === "clothing");
+    setClothing(clothing);
+    const toys = items.filter((item) => item?.category === "toys");
+    setToys(toys);
+  };
 
-  useEffect(()=>{
-loadBlockChainData();
-  },[])
+  useEffect(() => {
+    loadBlockChainData();
+  }, []);
 
   return (
     <div>
-      <Navigation account={account} setAccount={setAccount}/>
-      <h1>Dappazon</h1>
+      <Navigation account={account} setAccount={setAccount} />
+      {electronics && (
+        <Section
+          title="Electronics"
+          items={electronics}
+          togglePop={togglePop}
+        />
+      )}
+      {clothing && (
+        <Section title="Clothing" items={clothing} togglePop={togglePop} />
+      )}
+      {toys && <Section title="Toys" items={toys} togglePop={togglePop} />}
+      {toggle && (
+        <Product
+          item={item}
+          provider={provider}
+          account={account}
+          ecommerce={ecommerce}
+          togglePop={togglePop}
+        />
+      )}
     </div>
   );
 }
