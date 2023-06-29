@@ -35,20 +35,20 @@ function App() {
     const network = await provider.getNetwork();
     // Connect with smart contract create JS versions
     console.log(parseInt(network.chainId))
-    const ecommerce = new ethers.Contract(
+    const ecommerceContract = new ethers.Contract(
       config[parseInt(network.chainId)].ecommerce.address,
       Ecommerce,
       provider
     );
-    setEcommrce(ecommerce);
-    console.log("contract", ecommerce);
+    setEcommrce(ecommerceContract);
+   
     // load products
     const items = [];
     for (let i = 0; i < 9; i++) {
-      const item = ecommerce.items[i + 1];
+      const item = await ecommerceContract.items(i + 1);
       items.push(item);
     }
-    console.log(items, items);
+
     const electronics = items.filter(
       (item) => item?.category === "electronics"
     );
