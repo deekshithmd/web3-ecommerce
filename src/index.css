@@ -10,9 +10,9 @@
   --clr-white: #FFFFFF;
   --clr-black: #000000;
   --clr-grey: #707070;
-  --clr-bunker: #131921;
-  --clr-ebony-clay: #232f3e;
-  --clr-orange: #FF9900;
+  --clr-bunker: #1770e4;
+  --clr-ebony-clay: #103f5d;
+  --clr-orange: #5bd3ed;
   --clr-orange-dark: #cc8111;
 }
 
@@ -39,9 +39,8 @@ h2:not(.product__overview h2) {
 
 nav {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   align-items: center;
-
   background-color: var(--clr-bunker);
 }
 
@@ -77,15 +76,14 @@ nav {
 
 .nav__links li {
   margin: 0 15px;
-}
-
-.nav__links li a {
-  text-decoration: none;
   color: var(--clr-white);
 }
 
-.nav__links li a:hover {
+
+
+.nav__links li:hover {
   color: var(--clr-orange);
+  cursor: pointer;
 }
 
 .nav__search {
@@ -145,13 +143,13 @@ nav {
 .card {
   width: 300px;
   height: 400px;
-
   margin: 10px auto;
-
   cursor: pointer;
   position: relative;
-
   transition: all 250ms ease;
+  border-radius: 20px;
+  border: 1px solid var(--clr-black);
+  overflow: hidden;
 }
 
 .card:hover {

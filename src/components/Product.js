@@ -63,10 +63,9 @@ const Product = ({ item, provider, account, ecommerce, togglePop }) => {
 
           <p>
             {item.description}
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima rem,
-            iusto, consectetur inventore quod soluta quos qui assumenda aperiam,
-            eveniet doloribus commodi error modi eaque! Iure repudiandae
-            temporibus ex? Optio!
+            This item in ecommerce site is sold by the seller, so we are providing platform for selling their item and
+            responsible for handling any consequences happens while buying. Warrenty and other facilities will be handled
+            by the seller iself.
           </p>
         </div>
 
